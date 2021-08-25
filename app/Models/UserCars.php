@@ -17,4 +17,6 @@ class UserCars extends Model
     protected $fillable = [
         'user_id', 'car_id',
     ];
+
+    protected $dates = ['deleted_at'];
 }

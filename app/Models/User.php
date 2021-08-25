@@ -2,15 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Passport\HasApiTokens;
+
+use App\Models\UserCars;
+use App\Models\Car;
 
 class User extends Authenticatable
 {
-    use Notifiable;
-    use SoftDeletes;
+    use SoftDeletes, HasApiTokens, Notifiable;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $dates = ['deleted_at'];
 
     /**
      * The attributes that are mass assignable.
@@ -38,4 +48,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function usersCars()
+    {
+        return $this->belongsToMany(Car::class, 'user_cars', 'user_id', 'car_id');
+    }
+
+    public function userCars($user_id)
+    {
+        return $this->belongsToMany(Car::class, 'user_cars', 'user_id', 'car_id')->where('user_id', (int)$user_id);
+    }
 }
